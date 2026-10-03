@@ -25,12 +25,12 @@ var style_AgedCareCenters_1 = function(feature, resolution){
     var style = [ new ol.style.Style({
         image: new ol.style.Icon({
                   imgSize: [580, 580],
-                  scale: 0.032758620689655175,
-                  anchor: [290.0, 290.0],
+                  scale: 0.03793103448275862,
+                  anchor: [290.0, 580.0],
                   anchorXUnits: "pixels",
                   anchorYUnits: "pixels",
                   rotation: 0.0,
-                  src: "styles/health_hospital.svg"
+                  src: "styles/disability_lowvision.svg"
             }),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,

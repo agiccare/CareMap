@@ -147,8 +147,8 @@ var featureOverlay = new ol.layer.Vector({
     updateWhileInteracting: true // optional, for instant visual feedback
 });
 
-var doHighlight = false;
-var doHover = true;
+var doHighlight = true;
+var doHover = false;
 
 function createPopupField(currentFeature, currentFeatureKeys, layer) {
     var popupText = '';
@@ -497,7 +497,56 @@ var bottomRightContainerDiv = document.getElementById('bottom-right-container')
 
 //title
 
+var Title = new ol.control.Control({
+    element: (() => {
+        var titleElement = document.createElement('div');
+        titleElement.className = 'top-right-title ol-control';
+        titleElement.innerHTML = '<h2 class="project-title">CareMap Malaysia</h2>';
+        return titleElement;
+    })(),
+    target: 'top-right-container'
+});
+map.addControl(Title)
+    
 //abstract
+
+var Abstract = new ol.control.Control({
+    element: (() => {
+        var titleElement = document.createElement('div');
+        titleElement.className = 'bottom-right-abstract ol-control';
+        titleElement.id = 'abstract';
+
+        var linkElement = document.createElement('a');
+
+        if (238 > 240) {
+            linkElement.setAttribute("onmouseenter", "showAbstract()");
+            linkElement.setAttribute("onmouseleave", "hideAbstract()");
+            linkElement.innerHTML = 'i';
+
+            window.hideAbstract = function() {
+                linkElement.classList.add("project-abstract");
+                linkElement.classList.remove("project-abstract-uncollapsed");
+                linkElement.innerHTML = 'i';
+            }
+
+            window.showAbstract = function() {
+                linkElement.classList.remove("project-abstract");
+                linkElement.classList.add("project-abstract-uncollapsed");
+                linkElement.innerHTML = 'ACGT CareMap Malaysia: An independent spatial intelligence platform making Malaysia\'s elder-care ecosystem transparent, verified, and accessible. Designed as a trusted national reference bridging families, care providers, and communities.';
+            }
+
+            hideAbstract();
+        } else {
+            linkElement.classList.add("project-abstract-uncollapsed");
+            linkElement.innerHTML = 'ACGT CareMap Malaysia: An independent spatial intelligence platform making Malaysia\'s elder-care ecosystem transparent, verified, and accessible. Designed as a trusted national reference bridging families, care providers, and communities.';
+        }
+
+        titleElement.appendChild(linkElement);
+        return titleElement;
+    })(),
+    target: 'bottom-right-container'
+});
+map.addControl(Abstract);
 
 
 //geolocate
