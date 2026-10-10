@@ -64,7 +64,7 @@
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>        
 
-        <script>
+       <script>
         window.addEventListener('load', function() {
             setTimeout(function() {
                 try {
@@ -79,7 +79,20 @@
                     }
 
                     if (targets.length > 0 && typeof map !== 'undefined') {
-                        map.getLayers().forEach(function(layer) {
+                        // Helper function to recursively find all layers including nested groups
+                        function getAllLayers(group, list) {
+                            group.getLayers().forEach(function(layer) {
+                                list.push(layer);
+                                if (layer instanceof ol.layer.Group) {
+                                    getAllLayers(layer, list);
+                                }
+                            });
+                        }
+
+                        let allLayers = [];
+                        getAllLayers(map.getLayerGroup(), allLayers);
+
+                        allLayers.forEach(function(layer) {
                             let source = layer.getSource && layer.getSource();
                             if (source && typeof source.getFeatures === 'function') {
                                 source.getFeatures().forEach(function(feature) {
@@ -104,8 +117,6 @@
                 } catch (err) {
                     console.error("Map filtering error bypassed:", err);
                 }
-            }, 1000);
+            }, 1200);
         });
         </script>
-    </body>
-</html>
