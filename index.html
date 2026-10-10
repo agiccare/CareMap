@@ -58,8 +58,55 @@
         <script src="./resources/ol-layerswitcher.js"></script>
         <script src="resources/photon-geocoder-autocomplete.min.js"></script>
         <script src="resources/olms.js"></script>
-        <script src="layers/AgedCareCenters_1.js"></script>
-        <script src="styles/AgedCareCenters_1_style.js"></script>
+        <script src="./resources/Autolinker.min.js"></script>
+        <script src="./resources/qgis2web.js"></script>        
+
+        <!-- ADD THIS FILTERING SCRIPT -->
+        <script>
+        window.addEventListener('load', function() {
+            // Wait 1 second for qgis2web to fully initialize and render layers
+            setTimeout(function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                let targets = [];
+                for (let i = 1; i <= 3; i++) {
+                    let lat = parseFloat(urlParams.get('lat' + i));
+                    let lon = parseFloat(urlParams.get('lon' + i));
+                    if (!isNaN(lat) && !isNaN(lon)) {
+                        targets.push({lat: lat, lon: lon});
+                    }
+                }
+
+                if (targets.length > 0 && typeof map !== 'undefined') {
+                    map.getLayers().forEach(function(layer) {
+                        let source = layer.getSource && layer.getSource();
+                        if (source && typeof source.getFeatures === 'function') {
+                            source.getFeatures().forEach(function(feature) {
+                                let geom = feature.getGeometry();
+                                if (geom && geom.getType() === 'Point') {
+                                    // qgis2web maps use Web Mercator, convert to standard lat/lon
+                                    let lonLat = ol.proj.toLonLat(geom.getCoordinates());
+                                    let featLon = lonLat[0];
+                                    let featLat = lonLat[1];
+                                    
+                                    let match = targets.some(t => 
+                                        Math.abs(t.lat - featLat) < 0.0005 && Math.abs(t.lon - featLon) < 0.0005
+                                    );
+                                    
+                                    if (!match) {
+                                        // Hide non-matching facility markers
+                                        feature.setStyle(new ol.style.Style({}));
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }, 1000);
+        });
+        </script>
+    </body>
+</html>
+       
         <script src="./layers/layers.js" type="text/javascript"></script> 
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>        
